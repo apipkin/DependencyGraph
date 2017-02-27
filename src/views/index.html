@@ -1,0 +1,38 @@
+<div class="panel">
+    <div class="title primary">
+        Class List
+    </div>
+    <form action="/build/" method="post" enctype="multipart/form-data" id="form__build">
+      <div class="panel-content">
+        <h3>Input File</h3>
+        <input id="f" name="file" type="file"><div class="line"></div>
+        <!--<input type="text" placeholder="Thing" name="thing" value="thung"/>-->
+      </div>
+      <div class="panel-action">
+        <input class="btn" type="submit" value="Build Directed Graph">
+        <input class="btn" type="reset" value="Clear">
+      </div>
+      <div class="loading hidden"></div>
+    </form>
+</div>
+<div class="panel hidden">
+    <form action="/order" method="get">
+      <div class="panel-content">
+        <h3>Class to Recompile</h3>
+        <input id="q" name="q" type="text" autocomplete="off"><div class="line"></div>
+      </div>
+      <div class="panel-action">
+        <input class="btn" type="submit" value="Topological Order">
+        <input class="btn" type="reset" value="Clear">
+      </div>
+      <div class="loading hidden"></div>
+    </form>
+</div>
+<div class="panel hidden result">
+    <div class="title secondary">
+        Recompilation Order
+    </div>
+    <div class="panel-content">
+      <div class="result__value"></div>
+    </div>
+</div>
