@@ -1,0 +1,32 @@
+{
+  "name": "TreeSort",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "node .",
+    "test": "tap ./test/*/*.js",
+    "test:cover": "tap --cov --coverage-report=text ./test/*/*.js",
+    "test:cover:browser": "tap --cov --coverage-report=lcov ./test/*/*.js"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Anthony Pipkin",
+    "email": "a.pipkin@yahoo.com",
+    "url": "http://a.pipk.in"
+  },
+  "license": "WTFPL",
+  "devDependencies": {
+    "chokidar-cli": "^1.2.0",
+    "tap": "^9.0.3"
+  },
+  "dependencies": {
+    "handlebars": "^4.0.6",
+    "hapi": "^16.1.0",
+    "hoek": "^4.1.0",
+    "inert": "^4.1.0",
+    "joi": "^10.2.2",
+    "vision": "^4.1.1",
+    "yar": "^8.1.2"
+  }
+}
