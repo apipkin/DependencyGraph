@@ -13,12 +13,9 @@ const DependencyGraph = {
     // data should be from a txt file; checked before sending to build()
     data.split('\n').forEach((line) => {
       var parts = line.split(' ');
-      var name = parts.shift;
-      var node = graphNode({
-        name: name,
-        neighbors: parts
-      });
-      nodes[name] = node;
+      var name = parts.shift();
+      this.addNode(name, { neighbors: parts });
+      parts.forEach(name => (this.addNode(name)));
     });
 
     // display sucess message
@@ -36,6 +33,10 @@ const DependencyGraph = {
    */
   getNode(name) {
     return this.nodes[name] || null;
+  },
+
+  addNode(name, options) {
+    this.nodes[name] = graphNode(Object.assign({ name: name }, options));
   },
 
   /**

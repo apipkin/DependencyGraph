@@ -73,45 +73,41 @@ server.register([require('inert'), require('vision'), {
       },
       handler: function (request, reply) {
         var data = request.payload;
-        // console.log('\n\n\n!~!~!~!~!~!~!~!~!~!~!~!~!\n\n\n\n')
-        console.log(request.mime);
-        // console.log('\n\n\n!~!~!~!~!~!~!~!~!~!~!~!~!\n\n\n\n')
-        console.log(request.payload);
-        // console.log('\n\n\n+++++++++++++++++++++++++\n\n\n\n')
-        // console.log(request);
 
-    
+            var recorder = '';
 
         if (data.file) {
+          data.file.on('data', function (chunk) {
+            recorder += chunk.toString();
+          });
 
-          console.log(Object.keys(data.file.hapi));
           var name = Math.random().toString().substr(2) + '_' + data.file.hapi.filename;
           var path = __dirname + "/uploads/" + name;
           var file = FS.createWriteStream(path);
 
           file.on('error', function (err) { 
-              console.log(Object.keys(data.file));
               console.error(err) 
           });
 
           data.file.pipe(file);
 
-          file.on('end', function (err) { 
-            console.log('done');
-              var ret = {
-                  filename: data.file.filename,
-                  headers: data.file.headers
-              }
-              reply(ret);
-          });
+          file.on('finish', function (err) { 
+            if (err) {
+              return reply({
+                error: err
+              });
+            }
 
-          file.on('close', function (err) { 
-            console.log('close');
-              var ret = {
-                  filename: data.file.filename,
-                  headers: data.file.headers
-              }
-              reply(ret);
+            console.log(recorder);
+
+            var graph = DGraph();
+            graph.build(recorder);
+
+            reply({
+                filename: data.file.hapi.filename,
+                upload: true,
+                graphNodes: graph.getNodeNames()
+            });
           });
         }
         else {
