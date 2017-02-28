@@ -24,6 +24,16 @@ const DependencyGraph = {
   /**
    * 
    */
+  getInboundNodes(name) {
+    this.resetNodes();
+    console.log(this.walkInboud(name));
+    this.resetNodes();
+    return this.walkInboud(name).join(' ');
+  },
+
+  /**
+   * 
+   */
   getNodeNames() {
     return Object.keys(this.nodes).sort();
   },
@@ -35,41 +45,70 @@ const DependencyGraph = {
     return this.nodes[name] || null;
   },
 
+  /**
+   * 
+   */
   addNode(name, options) {
-    this.nodes[name] = graphNode(Object.assign({ name: name }, options));
+    var nodePrimer = (this.nodes[name] || { name: name });
+    this.nodes[name] = graphNode(Object.assign(nodePrimer, options));  
   },
 
   /**
    * @returns {array}
    */
-  getNeighbors(node) {
+  walkInboud(node) {
     var nodes = [];
 
-    if (n.discoverd) {
+    node = this.getNode(node);
+
+    if (!node) {
+      // throw NodeRetrievalError
+      console.log('no node... ');
+      return nodes;
+    }
+
+    if (node.isDiscovered()) {
       // throw cycle detected exception
+      console.log('node ' + node + ' has been found');
+      return nodes;
     }
     
-    nodes.push(n);
-    n.discoverd = true;
+    nodes.push(node);
+    node.setDiscovered(true);
 
-    node.neighbors.forEach((n) => {
-      const neighbor = this.getNode(n.name);
+    var stack = node.neighbors.concat();
 
-      if (!neighbor) {
-        // throw NodeRetrievalError
-        return;
-      }
-
-      if (neighbor.discoverd) {
-        // throw CycleDetectedException
-        return;
-      }
-
-      nodes.concat(this.getNeighbors(neighbor));
-      neighbor.discoverd = true;
-    });
+    while (stack.length) {
+      nodes = nodes.concat(this.walkInboud(stack.pop()));
+    }
 
     return nodes;
+  },
+
+  /**
+   * 
+   */
+  resetNodes() {
+    Object.keys(this.nodes).forEach(n => ( this.nodes[n].setDiscovered(false) ));
+  },
+
+  /**
+   * 
+   */
+  dehydrate: function () {
+    return JSON.stringify(this.nodes);
+  },
+
+  /**
+   * 
+   */
+  hydrate: function (nodes) {
+    nodes = JSON.parse(nodes);
+    Object.keys(nodes).forEach(n => {
+      nodes[n] = graphNode(nodes[n]);
+    });
+    this.nodes = nodes;
+    return this;
   }
 };
 

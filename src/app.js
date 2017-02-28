@@ -98,10 +98,9 @@ server.register([require('inert'), require('vision'), {
               });
             }
 
-            console.log(recorder);
-
             var graph = DGraph();
             graph.build(recorder);
+            request.yar.set('graph', graph.dehydrate());
 
             reply({
                 filename: data.file.hapi.filename,
@@ -117,40 +116,38 @@ server.register([require('inert'), require('vision'), {
     }
   });
 
-  // Handle build calls with no query
+  // Handle topology calls with no query
   server.route({
     method: 'get',
-    path: '/order/',
+    path: '/topology/',
     handler: function (request, reply) {
       return reply({
-        list: '',
+        query: '',
         error: {
-          message: 'Please enter a list of integers or fractions.'
+          message: 'Please select a class to recompile.'
         }
       })
     }
   });
 
-  // Handle sort calls with a query
+  // Handle topology calls with a query
   server.route({
     method: 'get',
-    path: '/post/{q}',
+    path: '/topology/{q}',
     handler: function (request, reply) {
-      const list = request.params.q;
-      const tree = DGraph();
-      const order = request.payload.order;
+      const topology = request.params.q;
 
       try {
-        tree.addValues(list);
+        // hydrate
+        const nodes = request.yar.get('graph');
+        const graph = DGraph().hydrate(nodes);
 
         return reply({
-          list: list,
-          sorted: order === 'desc' ? tree.toStringDesc() : tree.toStringAsc(),
-          tree: tree
+          query: topology,
+          inbound: graph.getInboundNodes(topology)
         });
       } catch (e) {
         return reply({
-          list: list,
           error: {
             name: e.name,
             message: e.message

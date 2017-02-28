@@ -1,113 +1,161 @@
 $(function () {
-  const $form = $('#form__build');
-  const $file = $('#f');
-  const $btn = $('#form__build .btn');
-  const $submitBtn = $('#form__build .btn[type="submit"]');
-  const $resetBtn = $('#form__build .btn[type="reset"]');
-  const $resultPanel = $('.panel.result');
-  const $result = $('.result .panel-content');
-  const $panelLoading = $('.panel .loading');
 
-  // $file.data('prev-val', $file.val());
+  const $step1 = $('#step-1');
+  const $step2 = $('#step-2');
+  const $step3 = $('#step-3');
 
-  // $file.on('keyup', function (e) {    
-  //   if ($file.val() !== $file.data('prev-val')) {      
-  //     hideResultsPanel();
-  //   }
-  //   $file.data('prev-val', $file.val());
-  //   updateButtons();
-  // });
+  // STEP 1
+  (function ($step) {
+    const $form = $step.find('form');
+    const $input = $step.find('input[type="file"]');
+    const $btns = $step.find('.btn');
+    const $submitBtn = $step.find('.btn[type="submit"]');
+    const $resetBtn = $step.find('.btn[type="reset"]');
+    const $respSelect = $step2.find('select');
+    const $loader = $step.find('.loading');
 
-  $file.on('input', function (e) {
-    updateButtons();
-  });
+    $input.on('input change', function (e) {
+      updateButtons($btns, !!($input.val()));
+    });
+    updateButtons($btns, !!($input.val()));
 
-  $form.on('submit', function (e) {
-    e.preventDefault();
-
-    var files = $file.get(0).files;
-    var formData = new FormData();
-
-
-    $.each(files, function (key, value) {
-      formData.append($file.get(0).name, value);
+    $form.on('reset', function (e) {
+      setTimeout(function (e) {
+        updateButtons($btns, !!($input.val()));
+        hideStepPanel($step2);
+        hideStepPanel($step3);
+      }, 0);
     });
 
-    var serializedData = $form.serializeArray();
+    $form.on('submit', function (e) {
+      e.preventDefault();
 
-    $.each(serializedData, function (k, v) {
-      formData.append(v.name, v.value);
+      var formData = new FormData();
+
+      $.each($input.get(0).files, function (key, value) {
+        formData.append($input.attr('name'), value);
+      });
+
+      $.ajax('/build/', {
+        data: formData,
+        contentType: false,
+        type: 'POST',
+        method: 'POST',
+        processData: false,
+        beforeSend: handleStart($btns, $loader),
+        complete: handleEnd($btns, $loader),
+        success: handleSuccess(resolve, reject),
+        failure: handleFaiure
+      });
     });
 
-    $.ajax('/build/', {
-      contentType: false,
-      data: formData,
-      type: 'POST',
-      method: 'POST',
-      processData: false,
-      // xhr: function () {
-      //   var myxhr = $.ajaxSettings.xhr();
-      //   if (myxhr.upload) {
-      //     myxhr.upload.addEventListener('progress', function (e) {
-      //       if (e.lengthComputable) {
-      //         console.log('Loaded: ' + e.loaded + ' Total: ' + e.total);
-      //       }
-      //     }, false);
-      //   }
-      //   return myxhr;
-      // },
+    function resolve (data) {
+      showStepPanel($step2);
+      hideStepPanel($step3);
 
-      beforeSend: handleStart,
-      complete: handleEnd,
-      success: handleSuccess,
-      failure: handleFaiure
-    });
-  });
-
-  $form.on('reset', function (e){
-    setTimeout(function (){
-    updateButtons();
-    hideResultsPanel();
-    }, 0);
-  });
-
-  function handleStart() {
-    $btn.attr('disabled', true);
-    $panelLoading.removeClass('hidden');
-  }
-
-  function handleEnd() {
-    $btn.attr('disabled', null);
-    $panelLoading.addClass('hidden');
-  }
-  
-  function handleSuccess(data) {
-    if (data.error) {
-      hideResultsPanel();
-      alert(data.error.message);
-    } else {
-      $result.parent().removeClass('hidden');
-      $result.html(data.sorted);
+      $respSelect.html('<option disabled selected value></option>');
+      data.graphNodes.forEach(function (node) {
+        $respSelect.append('<option value="' + node + '">' + node + '</option>');
+      });
     }
+
+    function reject(data) {
+      hideStepPanel($step2);
+      hideStepPanel($step3);
+      console.log('rejected', data);
+    }
+  })($step1);
+
+
+  // STEP 2
+  (function ($step) {
+    const $form = $step.find('form');
+    const $input = $step.find('select');
+    const $btns = $step.find('.btn');
+    const $submitBtn = $step.find('.btn[type="submit"]');
+    const $resetBtn = $step.find('.btn[type="reset"]');
+    const $loader = $step.find('.loading');
+
+    $input.on('change', function (e) {
+      updateButtons($btns, !!($input.val()));
+    });
+    updateButtons($btns, !!($input.val()));
+
+    $form.on('reset', function (e) {
+      setTimeout(function (e) {
+        updateButtons($btns, !!($input.val()));
+        hideStepPanel($step3);
+      }, 0);
+    });
+
+    $form.on('submit', function (e) {
+      e.preventDefault();
+
+      $.ajax('/topology/' + $input.val(), {
+        // contentType: false,
+        type: 'GET',
+        method: 'GET',
+        // processData: false,
+        beforeSend: handleStart($btns, $loader),
+        complete: handleEnd($btns, $loader),
+        success: handleSuccess(resolve, reject),
+        failure: handleFaiure
+      });
+    });
+
+    function resolve (data) {
+      showStepPanel($step3);
+      $step3.find('.result__value').html(data.inbound);
+    }
+
+    function reject(data) {
+      hideStepPanel($step3);
+      console.log('rejected', data);
+    }
+
+    function failure(data) {
+      console.log('failure', data);
+    }
+  })($step2);
+
+
+  function updateButtons(btns, hasValue) {
+    btns.attr('disabled', hasValue ? null : true);
+  }
+
+  function showStepPanel($panel) {
+    $panel.removeClass('hidden');
+  }
+
+  function hideStepPanel($panel) {
+    $panel.addClass('hidden');
+  }
+
+  function handleStart($btns, $loader) {
+    return function () {
+      $btns.attr('disabled', true);
+      $loader.removeClass('hidden');
+    };
   }
 
   function handleFaiure(data) {
+    console.log('Failure:');
     console.log(data);
   }
 
-  function hideResultsPanel() {
-    $resultPanel.addClass('hidden');
-  }
-
-  function updateButtons() {
-    if ($file.val()) {
-      $submitBtn.attr('disabled', null);
-      $resetBtn.attr('disabled', null);
-    } else {
-      $submitBtn.attr('disabled', true);
-      $resetBtn.attr('disabled', true);
+  function handleSuccess(resolve, reject) {
+    return function (data) {
+      data.error ? reject(data) : resolve(data);
     }
   }
-  updateButtons();
+
+
+  function handleEnd($btns, $loader) {
+    return function () {
+      $btns.attr('disabled', null);
+      $loader.addClass('hidden');
+    };
+  }
+  
 });
 

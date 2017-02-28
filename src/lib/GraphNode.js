@@ -11,7 +11,8 @@ var Factory = function (primer) {
     discoverd: false
   }, primer, {
     toString: toString,
-    toArray: toArray
+    isDiscovered: isDiscovered,
+    setDiscovered: setDiscovered
   });
 };
 
@@ -29,19 +30,21 @@ function toString () {
 }
 
 /**
- * Returns the current node and decending nodes as an array
- * @returns {Array}
- */
-function toArray () {
-  return this.getNeighbors();
-}
-
-/**
  * Evaluates the presence of a name
  * @returns {boolean}
  */
-function hasName () {
-  return this.name !== null;
+function isDiscovered () {
+  return this.discoverd === true;
+}
+
+/**
+ * Sets the value of whether the node has been discovered
+ * @param {boolean} 
+ * @return {Object} GraphNode
+ */
+function setDiscovered (discovered) {
+  this.discoverd = !!discovered;
+  return this;
 }
 
 

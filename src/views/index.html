@@ -1,4 +1,4 @@
-<div class="panel">
+<div id="step-1" class="panel">
     <div class="title primary">
         Class List
     </div>
@@ -15,11 +15,11 @@
       <div class="loading hidden"></div>
     </form>
 </div>
-<div class="panel hidden">
+<div id="step-2" class="panel hidden">
     <form action="/order" method="get">
       <div class="panel-content">
         <h3>Class to Recompile</h3>
-        <input id="q" name="q" type="text" autocomplete="off"><div class="line"></div>
+        <select name="recompile"><div class="line"></div>
       </div>
       <div class="panel-action">
         <input class="btn" type="submit" value="Topological Order">
@@ -28,7 +28,7 @@
       <div class="loading hidden"></div>
     </form>
 </div>
-<div class="panel hidden result">
+<div id="step-3" class="panel hidden result">
     <div class="title secondary">
         Recompilation Order
     </div>
