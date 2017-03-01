@@ -2,14 +2,15 @@ const graphNode = require('./GraphNode').Factory;
 
 const DependencyGraph = {
   /**
-   * 
+   * @property {Object} nodes
    */
   nodes: {},
 
   /**
-   * 
+   * @param {String}
    */
   build(data) {
+    // test for data to be a string
     // data should be from a txt file; checked before sending to build()
     data.split('\n').forEach((line) => {
       var parts = line.split(' ');
@@ -22,31 +23,34 @@ const DependencyGraph = {
   },
 
   /**
-   * 
+   * @param {String} name
+   * @returns {String}
    */
   getInboundNodes(name) {
     this.resetNodes();
-    console.log(this.walkInboud(name));
+    // console.log(this.walkInboud(name));
     this.resetNodes();
     return this.walkInboud(name).join(' ');
   },
 
   /**
-   * 
+   * @returns {array}
    */
   getNodeNames() {
     return Object.keys(this.nodes).sort();
   },
 
   /**
-   * 
+   * @param {String} name
+   * @returns {Object|null} GraphNode or null
    */
   getNode(name) {
     return this.nodes[name] || null;
   },
 
   /**
-   * 
+   * @param {String} name
+   * @param {Object} [optional] options
    */
   addNode(name, options) {
     var nodePrimer = (this.nodes[name] || { name: name });
@@ -54,6 +58,7 @@ const DependencyGraph = {
   },
 
   /**
+   * @param {Object} node GraphNode
    * @returns {array}
    */
   walkInboud(node) {
@@ -93,14 +98,15 @@ const DependencyGraph = {
   },
 
   /**
-   * 
+   * @returns {String} 
    */
   dehydrate: function () {
     return JSON.stringify(this.nodes);
   },
 
   /**
-   * 
+   * @param {String} 
+   * @returns {Object} DependencyGraph instance with nodes
    */
   hydrate: function (nodes) {
     nodes = JSON.parse(nodes);

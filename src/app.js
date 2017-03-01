@@ -56,25 +56,15 @@ server.register([require('inert'), require('vision'), {
     method: 'post',
     path: '/build/',
     config: {
-      // validate: {
-      //   payload: {
-      //     // multipart: {
-      //     //   mode: 'file',
-      //     //   uploadDir: __dirname + "/uploads/"
-      //     // },
-      //     // file: Joi.string().required().description('File is required')
-      //   }
-      // },
       payload: {
         output: 'stream',
         parse: true,
-        // allow: ['multipart/form-data', 'text/plain']
         allow: ['multipart/form-data']
       },
       handler: function (request, reply) {
         var data = request.payload;
 
-            var recorder = '';
+        var recorder = '';
 
         if (data.file) {
           data.file.on('data', function (chunk) {
@@ -100,6 +90,7 @@ server.register([require('inert'), require('vision'), {
 
             var graph = DGraph();
             graph.build(recorder);
+            
             request.yar.set('graph', graph.dehydrate());
 
             reply({

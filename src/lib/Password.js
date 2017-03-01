@@ -44,8 +44,8 @@ function generate(options) {
 
   if (options.lowerCase) charCodes = charCodes.concat(codes.lower);
   if (options.upperCase) charCodes = charCodes.concat(codes.upper);
-  if (options.numbers) charCodes = charCodes.concat(codes.numbers);
-  if (options.special) charCodes = charCodes.concat(codes.special);
+  if (options.numbers)   charCodes = charCodes.concat(codes.numbers);
+  if (options.special)   charCodes = charCodes.concat(codes.special);
 
   while (options.length) {
     password += String.fromCharCode(charCodes[Math.floor(Math.random() * (charCodes.length  - 1))]);
