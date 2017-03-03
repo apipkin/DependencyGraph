@@ -52,11 +52,14 @@ $(function () {
     function resolve (data) {
       showStepPanel($step2);
       hideStepPanel($step3);
+      
+      var options = '<option disabled selected value></option>';
 
-      $respSelect.html('<option disabled selected value></option>');
       data.graphNodes.forEach(function (node) {
-        $respSelect.append('<option value="' + node + '">' + node + '</option>');
+        options += '<option value="' + node + '">' + node + '</option>';
       });
+
+      $respSelect.empty().html(options);
     }
 
     function reject(data) {
