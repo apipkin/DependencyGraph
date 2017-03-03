@@ -13,6 +13,10 @@ const DependencyGraph = {
     // test for data to be a string
     // data should be from a txt file; checked before sending to build()
     data.split('\n').forEach((line) => {
+      line = line.replace(/^\s+/, '')   // trim leading spaces
+                 .replace(/\s+$/, '')   // trim trailing spaces
+                 .replace(/\s+/g, ' '); // replace consecutive spaces
+
       var parts = line.split(' ');
       var name = parts.shift();
       this.addNode(name, { neighbors: parts });
@@ -120,5 +124,5 @@ const DependencyGraph = {
 
 // exports
 module.exports = function () {
-  return Object.assign({}, DependencyGraph, { });
+  return Object.assign({}, DependencyGraph, { nodes: {} });
 }

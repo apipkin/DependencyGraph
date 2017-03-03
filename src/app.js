@@ -64,11 +64,11 @@ server.register([require('inert'), require('vision'), {
       handler: function (request, reply) {
         var data = request.payload;
 
-        var recorder = '';
+        var fileData = '';
 
         if (data.file) {
           data.file.on('data', function (chunk) {
-            recorder += chunk.toString();
+            fileData += chunk.toString();
           });
 
           var name = Math.random().toString().substr(2) + '_' + data.file.hapi.filename;
@@ -89,8 +89,9 @@ server.register([require('inert'), require('vision'), {
             }
 
             var graph = DGraph();
-            graph.build(recorder);
+            graph.build(fileData);
             
+            request.yar.clear('graph');
             request.yar.set('graph', graph.dehydrate());
 
             reply({
