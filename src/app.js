@@ -61,45 +61,47 @@ server.register([require('inert'), require('vision'), {
         parse: true,
         allow: ['multipart/form-data']
       },
-      handler: function (request, reply) {
-        var data = request.payload;
+      handler(request, reply) {
+        const data = request.payload;
 
-        var fileData = '';
+        let fileData = '';
 
         if (data.file) {
-          data.file.on('data', function (chunk) {
-            fileData += chunk.toString();
-          });
-
-          var name = Math.random().toString().substr(2) + '_' + data.file.hapi.filename;
-          var path = __dirname + "/uploads/" + name;
-          var file = FS.createWriteStream(path);
-
-          file.on('error', function (err) { 
-              console.error(err) 
-          });
-
-          data.file.pipe(file);
-
-          file.on('finish', function (err) { 
-            if (err) {
-              return reply({
-                error: err
-              });
-            }
-
-            var graph = DGraph();
-            graph.build(fileData);
-            
-            request.yar.clear('graph');
-            request.yar.set('graph', graph.dehydrate());
-
-            reply({
-                filename: data.file.hapi.filename,
-                upload: true,
-                graphNodes: graph.getNodeNames()
+          try {
+            data.file.on('data', (chunk) => {
+              fileData += chunk.toString();
             });
-          });
+
+            data.file.on('end', (err) => {
+              if (err) {
+                return reply({
+                  error: err
+                });
+              }
+
+              const graph = DGraph();
+              graph.build(fileData);
+              
+              // store in session for next route
+              request.yar.clear('graph');
+              request.yar.set('graph', graph.dehydrate());
+
+              reply({
+                  filename: data.file.hapi.filename,
+                  upload: true,
+                  graphNodes: graph.getNodeNames()
+              });
+            });
+          }
+          catch (e) {
+            return reply({
+              filename: data.file.hapi.filename,
+              error: {
+                name: e.name,
+                message: e.message
+              }
+            });
+          }
         }
         else {
           reply({ noop: true });
@@ -112,21 +114,21 @@ server.register([require('inert'), require('vision'), {
   server.route({
     method: 'get',
     path: '/topology/',
-    handler: function (request, reply) {
-      return reply({
+    handler: (request, reply) => (
+      reply({
         query: '',
         error: {
           message: 'Please select a class to recompile.'
         }
       })
-    }
+    )
   });
 
   // Handle topology calls with a query
   server.route({
     method: 'get',
     path: '/topology/{q}',
-    handler: function (request, reply) {
+    handler(request, reply) {
       const topology = request.params.q;
 
       try {
@@ -140,6 +142,7 @@ server.register([require('inert'), require('vision'), {
         });
       } catch (e) {
         return reply({
+          query: topology,
           error: {
             name: e.name,
             message: e.message
@@ -151,24 +154,24 @@ server.register([require('inert'), require('vision'), {
 
   // Handle style requests
   server.route({
-      method: 'get',
-      path: '/styles/{file}',
-      handler: {
-          directory: {
-              path: './public/styles'
-          }
+    method: 'get',
+    path: '/styles/{file}',
+    handler: {
+      directory: {
+        path: './public/styles'
       }
+    }
   });
 
   // Handle script requests
   server.route({
-      method: 'get',
-      path: '/scripts/{file}',
-      handler: {
-          directory: {
-              path: './public/scripts'
-          }
+    method: 'get',
+    path: '/scripts/{file}',
+    handler: {
+      directory: {
+        path: './public/scripts'
       }
+    }
   });
 
   // Handle DGraph sorter view
