@@ -1,4 +1,6 @@
 const graphNode = require('./GraphNode').Factory;
+const CircularDependency = require('./CircularDependency');
+const NodeRetrievalError = require('./NodeRetrievalError');
 
 const DependencyGraph = {
   /**
@@ -71,18 +73,15 @@ const DependencyGraph = {
     node = this.getNode(node);
 
     if (!node) {
-      // throw NodeRetrievalError
-      console.log('no node... ');
-      return nodes;
+      throw new NodeRetrievalError(`Cannot find node: ${node}`);
     }
 
     if (node.isDiscovered()) {
-      // throw cycle detected exception
-      console.log('node ' + node + ' has been found');
-      return nodes;
+      throw new CircularDependency(`Node ${node} has been found already.`);
     }
     
     nodes.push(node);
+    // console.log(node.toString(), 'found');
     node.setDiscovered(true);
 
     var stack = node.neighbors.concat();

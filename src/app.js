@@ -141,6 +141,7 @@ server.register([require('inert'), require('vision'), {
           inbound: graph.getInboundNodes(topology)
         });
       } catch (e) {
+        console.log(e);
         return reply({
           query: topology,
           error: {

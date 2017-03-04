@@ -65,7 +65,8 @@ $(function () {
     function reject(data) {
       hideStepPanel($step2);
       hideStepPanel($step3);
-      console.log('rejected', data);
+      // console.log('rejected', data);
+      displayError(data.error.message, data.error.name);
     }
   })($step1);
 
@@ -113,7 +114,8 @@ $(function () {
 
     function reject(data) {
       hideStepPanel($step3);
-      console.log('rejected', data);
+      // console.log('rejected', data);
+      displayError(data.error.message, data.error.name);
     }
 
     function failure(data) {
@@ -152,12 +154,16 @@ $(function () {
     }
   }
 
-
   function handleEnd($btns, $loader) {
     return function () {
       $btns.attr('disabled', null);
       $loader.addClass('hidden');
     };
+  }
+
+  function displayError(msg, title) {
+    console.log('displayError');
+    alert('Name: ' + title + '\n\nMessage: ' + msg);
   }
   
 });
