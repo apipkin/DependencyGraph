@@ -60,6 +60,10 @@ $(function () {
       });
 
       $respSelect.empty().html(options);
+
+      if (data.successful) {
+        displayMessage('Graph built successfully.', 'Sucessful Build');
+      }
     }
 
     function reject(data) {
@@ -159,6 +163,10 @@ $(function () {
       $btns.attr('disabled', null);
       $loader.addClass('hidden');
     };
+  }
+
+  function displayMessage(msg, title) {
+    alert('Name: ' + title + '\n\nMessage: ' + msg);
   }
 
   function displayError(msg, title) {
