@@ -1,4 +1,4 @@
-# Binary Search Tree Sorter
+# Class Dependency Graph
 
 Dependency Graph ...
 
