@@ -83,17 +83,17 @@ const DependencyGraph = {
    * @param {Object} node GraphNode
    * @returns {array}
    */
-  walkInboud(node) {
+  walkInboud(nodeName) {
     var nodes = [];
 
-    node = this.getNode(node);
+    var node = this.getNode(nodeName);
 
     if (!node) {
-      throw new NodeRetrievalError(`Cannot find node: ${node}`);
+      throw new NodeRetrievalError(`Cannot find node: ${nodeName}`);
     }
 
     if (node.isDiscovered()) {
-      throw new CircularDependency(`Node ${node} has been found already.`);
+      throw new CircularDependency(`Node ${nodeName} has been found already.`);
     }
     
     nodes.push(node);
