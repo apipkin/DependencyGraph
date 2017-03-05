@@ -84,7 +84,7 @@ server.register([require('inert'), require('vision'), {
               
               // store in session for next route
               request.yar.clear('graph');
-              request.yar.set('graph', graph.dehydrate());
+              request.yar.set('graph', graph.serialize());
 
               reply({
                   filename: data.file.hapi.filename,
@@ -141,7 +141,6 @@ server.register([require('inert'), require('vision'), {
           inbound: graph.getInboundNodes(topology)
         });
       } catch (e) {
-        console.log(e);
         return reply({
           query: topology,
           error: {

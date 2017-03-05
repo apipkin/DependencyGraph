@@ -162,7 +162,6 @@ $(function () {
   }
 
   function displayError(msg, title) {
-    console.log('displayError');
     alert('Name: ' + title + '\n\nMessage: ' + msg);
   }
   

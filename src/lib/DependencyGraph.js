@@ -2,6 +2,9 @@ const graphNode = require('./GraphNode').Factory;
 const CircularDependency = require('./CircularDependency');
 const NodeRetrievalError = require('./NodeRetrievalError');
 
+/**
+ * 
+ */
 const DependencyGraph = {
   /**
    * @property {Object} nodes
@@ -9,11 +12,15 @@ const DependencyGraph = {
   nodes: {},
 
   /**
-   * @param {String}
+   * Adds nodes to data used to build create and pass inbound data to a node
+   * @param {String} data Dependency structure 
    */
   build(data) {
-    // test for data to be a string
     // data should be from a txt file; checked before sending to build()
+    if (typeof data !== 'string') {
+      data = data.toString();
+    }
+
     data.split('\n').forEach((line) => {
       line = line.replace(/^\s+/, '')   // trim leading spaces
                  .replace(/\s+$/, '')   // trim trailing spaces
@@ -24,22 +31,21 @@ const DependencyGraph = {
       this.addNode(name, { neighbors: parts });
       parts.forEach(name => (this.addNode(name)));
     });
-
-    // display sucess message
   },
 
   /**
+   * Resets the discovered state of the nodes and returns the list of nodes 
+   *   with inboud dependencies to the provided named node. 
    * @param {String} name
    * @returns {String}
    */
   getInboundNodes(name) {
     this.resetNodes();
-    // console.log(this.walkInboud(name));
-    this.resetNodes();
     return this.walkInboud(name).join(' ');
   },
 
   /**
+   * Returns an array of all known node names.
    * @returns {array}
    */
   getNodeNames() {
@@ -47,6 +53,8 @@ const DependencyGraph = {
   },
 
   /**
+   * Returns a node when found using the given name. If no node is found, 
+   *   returns null.
    * @param {String} name
    * @returns {Object|null} GraphNode or null
    */
@@ -55,15 +63,23 @@ const DependencyGraph = {
   },
 
   /**
+   * Instantiates a node and adds it to the graph. Options are used to add 
+   *   additional data to the node at instantiation
    * @param {String} name
-   * @param {Object} [optional] options
+   * @param {Object} [options] 
+   * @returns {Object} DependencyGraph
    */
   addNode(name, options) {
     var nodePrimer = (this.nodes[name] || { name: name });
-    this.nodes[name] = graphNode(Object.assign(nodePrimer, options));  
+    this.nodes[name] = graphNode(Object.assign(nodePrimer, options)); 
+    return this; 
   },
 
   /**
+   * Walks inbound nodes og the DependencyGraph and retruns an array of
+   *   discovered nodes
+   * @throws NodeRetrievalError if node cannot be found in the graph
+   * @throws CircularDependency if the node discovered is already discovered
    * @param {Object} node GraphNode
    * @returns {array}
    */
@@ -81,7 +97,6 @@ const DependencyGraph = {
     }
     
     nodes.push(node);
-    // console.log(node.toString(), 'found');
     node.setDiscovered(true);
 
     var stack = node.neighbors.concat();
@@ -94,20 +109,23 @@ const DependencyGraph = {
   },
 
   /**
-   * 
+   * Sets all nodes as undiscovered
    */
   resetNodes() {
     Object.keys(this.nodes).forEach(n => ( this.nodes[n].setDiscovered(false) ));
   },
 
   /**
+   * Serializes the DependencyGraph nodes
    * @returns {String} 
    */
-  dehydrate: function () {
+  serialize: function () {
     return JSON.stringify(this.nodes);
   },
 
   /**
+   * Populates the DependencyGraph with nodes from a previously serialized 
+   *   instance
    * @param {String} 
    * @returns {Object} DependencyGraph instance with nodes
    */

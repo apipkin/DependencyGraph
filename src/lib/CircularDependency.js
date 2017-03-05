@@ -3,7 +3,8 @@
 
 /**
  * Custom error message to throw if a value is not valid
- * @param {string} [Optional] custom message
+ * @constructor
+ * @param {string} [msg] custom message
  */
 function CircularDependency (msg) {
   this.name = 'CircularDependency';
