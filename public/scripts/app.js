@@ -166,11 +166,11 @@ $(function () {
   }
 
   function displayMessage(msg, title) {
-    alert('Name: ' + title + '\n\nMessage: ' + msg);
+    alert(title + '\n￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n' + msg);
   }
 
   function displayError(msg, title) {
-    alert('Name: ' + title + '\n\nMessage: ' + msg);
+    alert('Error: ' + title + '\n￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣￣\n' + msg);
   }
   
 });
