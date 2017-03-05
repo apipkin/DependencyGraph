@@ -19,8 +19,6 @@ server.connection({
   port: process.env.PORT || 3501
 });
 
-
-
 // Register inert (static file serving) and vision (handlebars) 
 server.register([require('inert'), require('vision'), {
   register: require('yar'),

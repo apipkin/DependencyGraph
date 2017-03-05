@@ -2,7 +2,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
 
 /**
- * Custom error message to throw if a value is not valid
+ * Custom error message to throw if a node cannot be found
  * @constructor
  * @param {string} [msg] custom message
  */

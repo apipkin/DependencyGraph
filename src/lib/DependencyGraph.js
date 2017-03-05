@@ -28,7 +28,7 @@ const DependencyGraph = {
 
       var parts = line.split(' ');
       var name = parts.shift();
-      this.addNode(name, { neighbors: parts });
+      this.addNode(name, { inbound: parts });
       parts.forEach(name => (this.addNode(name)));
     });
   },
@@ -99,7 +99,7 @@ const DependencyGraph = {
     nodes.push(node);
     node.setDiscovered(true);
 
-    var stack = node.neighbors.concat();
+    var stack = node.getInbound().concat();
 
     while (stack.length) {
       nodes = nodes.concat(this.walkInboud(stack.pop()));

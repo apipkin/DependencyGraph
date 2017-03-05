@@ -1,18 +1,19 @@
 /**
- * Factory: . 
- * @param {Object} [optional] Instance values to override default values
- * @return {Object} Tree Node
+ * Factory: Creates and returns a node that can be added to a graph structure. 
+ * @param {Object} [primer] Instance values to override default values
+ * @return {Object} GraphNode
  */
 var Factory = function (primer) {
 
   return Object.assign({
     name: null,
-    neighbors: [],
-    discoverd: false
+    inbound: [],
+    discovered: false
   }, primer, {
     toString: toString,
     isDiscovered: isDiscovered,
-    setDiscovered: setDiscovered
+    setDiscovered: setDiscovered,
+    getInbound: getInbound
   });
 };
 
@@ -26,7 +27,7 @@ module.exports = {
  * @returns {String}
  */
 function toString () {
-  return this.name;
+  return this.name === null ? '' : this.name.toString();
 }
 
 /**
@@ -34,18 +35,23 @@ function toString () {
  * @returns {boolean}
  */
 function isDiscovered () {
-  return this.discoverd === true;
+  return this.discovered === true;
 }
 
 /**
  * Sets the value of whether the node has been discovered
- * @param {boolean} 
+ * @param {boolean} discovered
  * @return {Object} GraphNode
  */
 function setDiscovered (discovered) {
-  this.discoverd = !!discovered;
+  this.discovered = !!discovered;
   return this;
 }
 
-
-
+/**
+ * Returns all known inbound node names
+ * @return {array} inbound node names
+ */
+function getInbound () {
+  return this.inbound;
+}
