@@ -3,7 +3,8 @@ const CircularDependency = require('./CircularDependency');
 const NodeRetrievalError = require('./NodeRetrievalError');
 
 /**
- * 
+ * Builds a graph from a list of node names that is able to be traversed from 
+ * any node name and retrieve a list of linked nodes.
  */
 const DependencyGraph = {
   /**
