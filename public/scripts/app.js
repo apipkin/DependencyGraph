@@ -60,6 +60,7 @@ $(function () {
       });
 
       $respSelect.empty().html(options);
+      updateButtons($step2.find('.btn'));
 
       if (data.successful) {
         displayMessage('Graph built successfully.', 'Sucessful Build');
