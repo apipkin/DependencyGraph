@@ -65,6 +65,15 @@ server.register([require('inert'), require('vision'), {
         let fileData = '';
 
         if (data.file) {
+          if (/\.txt$/.test(data.file.hapi.filename) === false) {
+            return reply({
+              error: {
+                name: 'Invalid file',
+                message: 'Files must be .txt'
+              }
+            });
+          }
+
           try {
             data.file.on('data', (chunk) => {
               fileData += chunk.toString();
@@ -86,7 +95,7 @@ server.register([require('inert'), require('vision'), {
 
               reply({
                   filename: data.file.hapi.filename,
-                  upload: true,
+                  successful: true,
                   graphNodes: graph.getNodeNames()
               });
             });
